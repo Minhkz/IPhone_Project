@@ -1,19 +1,18 @@
 package com.devpro.controller.client;
 
-import com.devpro.models.Product;
-import com.devpro.models.User;
-import com.devpro.models.Wishlist;
-import com.devpro.models.WishlistItem;
-import com.devpro.repository.CartItemRepository;
-import com.devpro.repository.CartRepository;
-import com.devpro.repository.WishListItemRepository;
-import com.devpro.repository.WishListRepository;
+import com.devpro.models.*;
+import com.devpro.repository.*;
 import com.devpro.service.impl.ProductService;
+import com.devpro.service.impl.ReviewService;
 import com.devpro.service.impl.UserService;
 import com.devpro.service.specification.ProductSpec;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +42,9 @@ public class ProductDetailsController {
     @Autowired
     private WishListItemRepository  wishListItemRepository;
 
+    @Autowired
+    private ReviewService reviewService;
+
     @GetMapping("/{id}")
     public String productDetailsPage(Model model, @PathVariable("id")int id, HttpServletRequest request) {
          Product product= productService.findById(id);
@@ -60,6 +62,11 @@ public class ProductDetailsController {
              wishIds = wish.stream().map(Product::getId).collect(Collectors.toSet());
 
          }
+         //review
+         Page<Review> reviewPages = this.reviewService.getReviews(product, 1, 5);
+         List<Review> reviews = reviewPages.getContent();
+
+         model.addAttribute("reviews", reviews);
          model.addAttribute("wishlistId",wishIds);
          model.addAttribute("productd",product);
          model.addAttribute("products",products);
@@ -85,6 +92,20 @@ public class ProductDetailsController {
         response.put("status", this.productService.handleProductToCart(email, id, session, quantity)?"success":"error");
         response.put("count", (Integer)session.getAttribute("sum"));
         return  response;
+    }
+
+    @PostMapping("/review/{id}")
+    public String review(@PathVariable("id")int id, HttpServletRequest request, @RequestParam(value = "comment", required = false) String comment) {
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("email");
+        User user = this.userService.getUserByEmail(email);
+        Product product = productService.findById(id);
+        Review review = new Review();
+        review.setProduct(product);
+        review.setUser(user);
+        review.setBody(comment);
+        this.reviewService.saveReview(review);
+        return "redirect:/client/productdetails/"+product.getId();
     }
 
 

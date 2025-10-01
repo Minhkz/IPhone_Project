@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                                 "/client/**", "/css/**", "/js/**", "/images/**", "/", "/admin/css/**", "/admin/assets/**"
                         , "/admin/js/**")
                         .permitAll()
-                        .requestMatchers("/admin/orders/**", "/admin").hasAnyRole("STAFF", "ADMIN")
+                        .requestMatchers("/admin/orders/**", "/admin/reviews/**", "/admin").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

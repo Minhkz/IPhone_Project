@@ -32,33 +32,24 @@ public class Review implements Serializable {
     @NonNull
     private User user;
 
-    @Column(nullable = false)
-    @Min(1)
-    @Max(5)
-    @NotNull
-    private Integer rating;
 
-    @Column(length = 255, nullable = false)
-    @NonNull
-    private String title;
-
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     @NonNull
     private String body;
 
     @Column(name = "is_approved")
-    private Boolean isApproved;
+    private Integer isApproved;
 
     @Column(name = "created_at")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @PrePersist
     public void defaults() {
         if (isApproved == null) {
-            isApproved = false;
+            isApproved = 0;
         }
-        if (this.createdDate == null) {
-            this.createdDate = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
         }
     }
 }

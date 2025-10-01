@@ -115,22 +115,60 @@
             </div>
         </div>
     </div>
-    <div class="Reviews">
-        <div class="container">
-            <div class="top">
-                <h1 class="m-2">Đánh giá sản phẩm</h1>
-                <img src="${env}/client/images/productsDetailsPage/Overall Rating.png">
-                <div class="input_comment border m-2" style="height: 64px">
-                    <form action="" method="post">
-                        <input type="text" name="comment" id="comment"  placeholder="Hãy để lại bình luận cho sản phẩm">
-                    </form>
-                </div>
-            </div>
-            <div class="Review">
-                <img src="${env}/client/images/productsDetailsPage/Reviews.png" alt="logo">
-            </div>
+    <div class="container py-5">
+        <h1>Đánh giá sản phẩm</h1>
+        <br>
+        <!-- Form nhập bình luận -->
+        <div class="mb-4">
+            <form action="/client/productdetails/review/${productd.id}" method="post">
+                <textarea class="form-control" placeholder="Viết bình luận..." rows="3" name="comment" required
+                          oninvalid="this.setCustomValidity('Vui lòng nhập bình luận!')"
+                          oninput="this.setCustomValidity('')"></textarea>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                <button type="submit" class="btn btn-primary mt-2">Gửi đánh giá</button>
+            </form>
 
         </div>
+
+        <!-- Danh sách đánh giá -->
+        <c:forEach var="review" items="${reviews}">
+            <div class="review-card">
+                <div class="d-flex align-items-center mb-2">
+                    <c:choose>
+                        <c:when test="${sessionScope.role eq 'ADMIN'}">
+                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
+                                 src="${env}/admin/images/user/${sessionScope.avatar}" width="40" height="40"/>
+                        </c:when>
+
+                        <c:when test="${sessionScope.role eq 'STAFF'}">
+                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
+                                 src="${env}/admin/images/user/${sessionScope.avatar}" width="40" height="40"/>
+                        </c:when>
+
+                        <c:otherwise>
+                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
+                                 src="${env}/client/images/avatar/${sessionScope.avatar}" width="40" height="40"/>
+                        </c:otherwise>
+
+                    </c:choose>
+                    <div style="padding-left: 2px">
+                        <div class="review-user">${review.user.fullName}</div>
+                        <div class="review-time">${review.createdAt}</div>
+                    </div>
+                </div>
+                <div class="review-body" style="padding-left: 42px">
+                    ${review.body}
+                </div>
+            </div>
+        </c:forEach>
+
+
+        <!-- Nút xem thêm -->
+        <div class="text-center mt-3">
+            <button id="loadMoreBtn" class="btn btn-outline-secondary" data-page="1">Xem thêm</button>
+        </div>
+
+
     </div>
     <div class="container">
         <div class="discounts">

@@ -12,21 +12,7 @@
     <title>Order</title>
     <!--css-->
     <jsp:include page="/WEB-INF/view/admin/layout/css.jsp"></jsp:include>
-    <style>
-        /* Header */
-        .header__search{
-            width: 372px;
-            height: 56px;
-            background-color: var(--bgr-search);
-            border-radius: 10px;
-            border: 1px solid black;
-        }
-        .header__search--input{
-            border: 0;
-            outline: none;
-            background-color: transparent;
-        }
-    </style>
+
 </head>
 <body class="sb-nav-fixed">
 <!--header-->

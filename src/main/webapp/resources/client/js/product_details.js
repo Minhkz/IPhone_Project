@@ -126,4 +126,6 @@ $(document).ready(function () {
         pairs.push(productId + ":" + qty);
         document.getElementById("selectedIds").value = pairs.join(",");
     });
+
+
 });

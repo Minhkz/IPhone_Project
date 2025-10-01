@@ -141,10 +141,8 @@ CREATE TABLE reviews (
   id 				INT AUTO_INCREMENT PRIMARY KEY,
   product_id 		INT NOT NULL,
   user_id 			INT DEFAULT NULL,
-  rating 			TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-  title 			VARCHAR(255) NOT NULL,
   body 				TEXT NOT NULL,
-  is_approved 		BIT(1) DEFAULT 0,
+  is_approved 		TINYINT(1) DEFAULT 0,
   created_at 		DATETIME DEFAULT NOW(),
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL

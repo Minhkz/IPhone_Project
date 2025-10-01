@@ -22,6 +22,10 @@
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-cart-shopping"></i></div>
                     Orders
                 </a>
+                <a class="nav-link" href="/admin/reviews">
+                    <div class="sb-nav-link-icon"><i class="fa-regular fa-pen-to-square"></i></div>
+                    Review
+                </a>
             </div>
         </div>
         <div class="sb-sidenav-footer d-flex gap-1 align-items-center">

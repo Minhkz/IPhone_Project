@@ -65,11 +65,33 @@
     height: 550px;
 }
 
-.Reviews .top{
-    margin: 88px 0 32px 0;
+.rating-summary {
+    font-size: 2.5rem;
+    font-weight: bold;
 }
-.Reviews .Review{
-    margin-bottom: 88px;
+.star {
+    color: #fbc02d;
+}
+.review-card {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+.review-user {
+    font-weight: 600;
+}
+.review-time {
+    color: #999;
+    font-size: 0.85rem;
+}
+.review-body {
+    margin-top: 5px;
+}
+.review-images img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 5px;
 }
 .minus{
     width: 24px;

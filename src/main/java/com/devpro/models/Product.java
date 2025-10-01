@@ -28,7 +28,7 @@ public class Product implements Serializable {
     @NonNull
     private Double price;
 
-    @Column(name = "detail_desc",nullable = false, columnDefinition = "MEDIUMTEXT ")
+    @Column(name = "detail_desc",nullable = false, columnDefinition = "MEDIUMTEXT")
     @NonNull
     private String detailDesc;
 
