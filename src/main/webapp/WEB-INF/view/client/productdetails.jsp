@@ -131,41 +131,35 @@
         </div>
 
         <!-- Danh sách đánh giá -->
-        <c:forEach var="review" items="${reviews}">
-            <div class="review-card">
-                <div class="d-flex align-items-center mb-2">
-                    <c:choose>
-                        <c:when test="${sessionScope.role eq 'ADMIN'}">
-                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
-                                 src="${env}/admin/images/user/${sessionScope.avatar}" width="40" height="40"/>
-                        </c:when>
-
-                        <c:when test="${sessionScope.role eq 'STAFF'}">
-                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
-                                 src="${env}/admin/images/user/${sessionScope.avatar}" width="40" height="40"/>
-                        </c:when>
-
-                        <c:otherwise>
-                            <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
-                                 src="${env}/client/images/avatar/${sessionScope.avatar}" width="40" height="40"/>
-                        </c:otherwise>
-
-                    </c:choose>
-                    <div style="padding-left: 2px">
-                        <div class="review-user">${review.user.fullName}</div>
-                        <div class="review-time">${review.createdAt}</div>
+        <div id="reviewList">
+            <c:forEach var="review" items="${reviews}">
+                <div class="review-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <c:choose>
+                            <c:when test="${review.role eq 'ADMIN' or review.role eq 'STAFF'}">
+                                <img style="width: 40px; height: 40px; border-radius: 50%;"
+                                     src="${env}/admin/images/user/${review.avatar}" width="40" height="40"/>
+                            </c:when>
+                            <c:otherwise>
+                                <img style="width: 40px; height: 40px; border-radius: 50%;"
+                                     src="${env}/client/images/avatar/${review.avatar}" width="40" height="40"/>
+                            </c:otherwise>
+                        </c:choose>
+                        <div style="padding-left: 2px">
+                            <div class="review-user">${review.fullName}</div>
+                            <div class="review-time">${review.createdAt}</div>
+                        </div>
                     </div>
+                    <div class="review-body" style="padding-left: 42px">${review.body}</div>
                 </div>
-                <div class="review-body" style="padding-left: 42px">
-                    ${review.body}
-                </div>
-            </div>
-        </c:forEach>
+            </c:forEach>
+        </div>
+
 
 
         <!-- Nút xem thêm -->
         <div class="text-center mt-3">
-            <button id="loadMoreBtn" class="btn btn-outline-secondary" data-page="1">Xem thêm</button>
+            <button type="button" id="loadMore" class="btn btn-outline-secondary" data-id="${productd.id}">Xem thêm</button>
         </div>
 
 

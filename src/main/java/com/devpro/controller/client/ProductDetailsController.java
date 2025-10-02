@@ -1,11 +1,13 @@
 package com.devpro.controller.client;
 
+import com.devpro.dto.ReviewDTO;
 import com.devpro.models.*;
 import com.devpro.repository.*;
 import com.devpro.service.impl.ProductService;
 import com.devpro.service.impl.ReviewService;
 import com.devpro.service.impl.UserService;
 import com.devpro.service.specification.ProductSpec;
+import com.devpro.utils.TimeAgoUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,9 @@ public class ProductDetailsController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
     @GetMapping("/{id}")
     public String productDetailsPage(Model model, @PathVariable("id")int id, HttpServletRequest request) {
          Product product= productService.findById(id);
@@ -62,12 +68,23 @@ public class ProductDetailsController {
              wishIds = wish.stream().map(Product::getId).collect(Collectors.toSet());
 
          }
-         //review
-         Page<Review> reviewPages = this.reviewService.getReviews(product, 1, 5);
-         List<Review> reviews = reviewPages.getContent();
+        // review
+        Page<Review> reviewPages = this.reviewService.getReviews(product, 1, 5);
+        List<Review> reviews = reviewPages.getContent();
 
-         model.addAttribute("reviews", reviews);
-         model.addAttribute("wishlistId",wishIds);
+        List<ReviewDTO> reviewDTOs = reviews.stream().map(r -> {
+            ReviewDTO dto = new ReviewDTO();
+            dto.setBody(r.getBody());
+            dto.setCreatedAt(TimeAgoUtil.toTimeAgo(r.getCreatedAt())); // time ago
+            dto.setFullName(r.getUser().getFullName());
+            dto.setAvatar(r.getUser().getAvatar());
+            dto.setRole(r.getUser().getRole().getName().toString());
+            return dto;
+        }).toList();
+
+        model.addAttribute("reviews", reviewDTOs);
+
+        model.addAttribute("wishlistId",wishIds);
          model.addAttribute("productd",product);
          model.addAttribute("products",products);
          return "client/productdetails";
@@ -108,5 +125,21 @@ public class ProductDetailsController {
         return "redirect:/client/productdetails/"+product.getId();
     }
 
+    @GetMapping("/load-more-reviews")
+    @ResponseBody
+    public List<ReviewDTO> loadMoreReviews(@RequestParam("productId") Long productId,
+                                        @RequestParam("offset") int offset,
+                                        @RequestParam("limit") int limit) {
+        List<Review> reviews = reviewRepository.findByProductId(productId, offset, limit);
+        return reviews.stream().map(r -> {
+            ReviewDTO dto = new ReviewDTO();
+            dto.setBody(r.getBody());
+            dto.setCreatedAt(TimeAgoUtil.toTimeAgo(r.getCreatedAt()));
+            dto.setFullName(r.getUser().getFullName());
+            dto.setAvatar(r.getUser().getAvatar());
+            dto.setRole(r.getUser().getRole().getName().toString());
+            return dto;
+        }).toList();
+    }
 
 }

@@ -32,7 +32,6 @@ public class UploadService implements IUploadService {
             if (!dir.exists())
                 dir.mkdirs();
             finalName=System.currentTimeMillis() + "-" + file.getOriginalFilename();
-            // Create the file on server
             File serverFile = new File(dir.getAbsolutePath() + File.separator + finalName);
 
 

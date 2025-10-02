@@ -127,5 +127,58 @@ $(document).ready(function () {
         document.getElementById("selectedIds").value = pairs.join(",");
     });
 
+    let offset = 5; // đã render 5 review ở JSP ban đầu
+    const limit = 5;
+    const productId = $('#loadMore').data("id");
+
+
+
+    $("#loadMore").click(function () {
+        $.ajax({
+            url: "/client/productdetails/load-more-reviews",
+            type: "GET",
+            data: {
+                productId: productId,
+                offset: offset,
+                limit: limit
+            },
+            success: function (data) {
+                if (data.length > 0) {
+                    data.forEach(review => {
+
+                        let avatarPath = "";
+                        if (review.role === "ADMIN" || review.role === "STAFF") {
+                            avatarPath = `/admin/images/user/${review.avatar}`;
+                        } else {
+                            avatarPath = `/client/images/avatar/${review.avatar}`;
+                        }
+
+                        $("#reviewList").append(`
+                        <div class="review-card">
+                            <div class="d-flex align-items-center mb-2">
+                                <img style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;"
+                                     src="${avatarPath}" width="40" height="40"/>
+                                <div style="padding-left: 2px">
+                                    <div class="review-user">${review.fullName}</div>
+                                    <div class="review-time">${review.createdAt}</div>
+                                </div>
+                            </div>
+                            <div class="review-body" style="padding-left: 42px">
+                                ${review.body}
+                            </div>
+                        </div>
+                    `);
+                    });
+
+                    offset += data.length;
+                } else {
+                    $("#loadMore").hide();
+                }
+            },
+            error: function () {
+                alert("Không thể tải thêm đánh giá!");
+            }
+        });
+    });
 
 });
