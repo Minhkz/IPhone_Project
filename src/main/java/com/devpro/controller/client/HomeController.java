@@ -59,6 +59,7 @@ public class HomeController {
         Set<Integer> wishListItemIds = new HashSet<>();
         if (email != null) {
             User user = userService.getUserByEmail(email);
+            model.addAttribute("user", user);
             Wishlist  wishlist = wishListRepository.findByUser(user);
 
             if (wishlist != null) {

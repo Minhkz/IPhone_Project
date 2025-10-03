@@ -3,6 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="en_US" scope="session"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,9 @@
     <!--CSRF-->
     <meta name="_csrf" content="${_csrf.token}" />
     <meta name="_csrf_header" content="${_csrf.headerName}" />
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
     <title>My Iphone</title>
 </head>
 <body>
@@ -185,7 +189,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${product.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                <fmt:formatNumber type="number" value="${product.price}" />đ
+                                                $<fmt:formatNumber value="${product.price}" type="number" pattern="#,###"/>
                                             </div>
                                             <form action="/client/productdetails/${product.id}" method="GET">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -299,7 +303,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${productDis.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                <fmt:formatNumber type="number" value="${productDis.price}" />đ
+                                                $<fmt:formatNumber type="number" value="${productDis.price}" />
                                             </div>
                                             <form action="/client/productdetails/${productDis.id}" method="GET">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -324,6 +328,28 @@
         </div>
     </div>
 </main>
+<!-- Nút chat -->
+<button class="chat-toggle" onclick="toggleChat()">
+    <i class="fa-regular fa-comment-dots fa-bounce" style="color: #fff;"></i>
+</button>
+
+<input type="hidden" id="username" value="${empty sessionScope.username ? '' : sessionScope.username}" />
+
+<!-- Khung chat (giữ như bạn có) -->
+<div id="chat-box" style="display:none; flex-direction:column;">
+    <div id="chat-header">
+        Hỗ trợ trực tuyến
+        <button onclick="toggleChat()">✖</button>
+    </div>
+    <div id="chat-messages" style="flex:1; overflow-y:auto; padding:10px;"></div>
+    <form id="messageForm" name="messageForm" onsubmit="sendMsg(event)">
+        <div id="chat-input" style="display:flex;">
+            <input type="text" id="msg" placeholder="Nhập tin nhắn..." style="flex:1;"/>
+            <button type="submit">Gửi</button>
+        </div>
+    </form>
+</div>
+
 <!-- Nút Scroll to Top -->
 <button id="scrollTopBtn" title="Go to top">↑</button>
 <!--Footer-->
@@ -333,9 +359,117 @@
 <jsp:include page="/WEB-INF/view/client/layout/js.jsp"></jsp:include>
 <script src="${env}/client/js/common.js"></script>
 <script src="${env}/client/js/home.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script>
+    // GLOBAL
+    var stompClient = null;
+    var username = '';
 
-<!-- Elfsight AI Chatbot -->
-<script src="https://elfsightcdn.com/platform.js" defer></script>
-<div class="elfsight-app-3d71aacc-c131-4512-927d-478360d585b6" data-elfsight-app-lazy></div>
+    // Lấy giá trị lúc load (an toàn)
+    window.onload = function () {
+        // 1) đọc từ hidden input (render từ server nếu có)
+        var el = document.getElementById('username');
+        if (el && el.value && el.value.trim() !== '') {
+            username = el.value.trim();
+        }
+
+        // 2) nếu không có, thử lấy từ userPrincipal (Spring Security) - server-side evaluated
+        if (!username) {
+            var principalFromServer = "${pageContext.request.userPrincipal != null ? pageContext.request.userPrincipal.name : ''}";
+            if (principalFromServer && principalFromServer !== '') {
+                username = principalFromServer;
+            }
+        }
+
+        // 3) fallback để test (Guest)
+        if (!username) {
+            username = 'Guest' + Math.floor(Math.random() * 10000);
+            console.warn('No username from server. Using fallback:', username);
+        }
+
+        console.log('Final username ->', username);
+
+        // Bắt đầu connect
+        connect();
+    };
+
+    function toggleChat() {
+        let chatBox = document.getElementById("chat-box");
+        chatBox.style.display = (chatBox.style.display === "none" || chatBox.style.display === "") ? "flex" : "none";
+    }
+
+    function connect() {
+        if (!username) {
+            console.error('Không có username, không connect WebSocket');
+            return;
+        }
+
+        // Dùng contextPath để chắc chắn đường dẫn đúng khi deploy có context
+        var sockJsUrl = '${pageContext.request.contextPath}/chat';
+        console.log('Connecting SockJS to', sockJsUrl);
+
+        var socket = new SockJS(sockJsUrl);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('✅ STOMP connected: ', frame);
+            onConnected();
+        }, function(error) {
+            console.error('❌ STOMP connect error:', error);
+        });
+    }
+
+    function onConnected() {
+        stompClient.subscribe('/topic/public', onMessageReceived);
+
+        // thông báo JOIN
+        stompClient.send("/app/chat.addUser", {}, JSON.stringify({
+            sender: username,
+            type: 'JOIN'
+        }));
+    }
+
+    function onMessageReceived(payload) {
+        try {
+            var message = JSON.parse(payload.body);
+            var messageArea = document.getElementById("chat-messages");
+            var div = document.createElement("div");
+
+            if (message.type === 'JOIN') {
+                div.textContent = message.sender + " đã tham gia phòng chat.";
+                div.style.color = "green";
+            } else if (message.type === 'LEAVE') {
+                div.textContent = message.sender + " đã rời phòng.";
+                div.style.color = "red";
+            } else {
+                div.textContent = message.sender + ": " + message.content;
+            }
+
+            messageArea.appendChild(div);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        } catch (e) {
+            console.error('Không parse được payload:', payload, e);
+        }
+    }
+
+    function sendMsg(event) {
+        event.preventDefault();
+        var messageInput = document.getElementById("msg");
+        var messageContent = messageInput.value.trim();
+
+        if (messageContent && stompClient && stompClient.connected) {
+            var chatMessage = {
+                sender: username,
+                content: messageContent,
+                type: 'CHAT'
+            };
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        } else {
+            console.warn("WebSocket chưa kết nối hoặc message rỗng. connected=", stompClient ? stompClient.connected : stompClient);
+        }
+    }
+</script>
 </body>
 </html>

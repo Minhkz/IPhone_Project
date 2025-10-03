@@ -60,29 +60,29 @@
                     <div class="ms-4">Miễn phí ship</div>
                 </div>
                 <div class="address__main--right me-4">
-                    <fmt:formatNumber type="number" value="0" />đ
+                    $<fmt:formatNumber type="number" value="0" />
                 </div>
             </div>
 
             <div class="address__main--content d-flex justify-content-between align-items-center"
                  style="height: 72px; border: 1px solid black; border-radius: 5px; margin-bottom: 24px">
                 <div class="main__content--left d-flex p-4">
-                    <input type="radio" name="shipping" value="29000" checked="checked" style="width: 24px; height: 24px;"/>
+                    <input type="radio" name="shipping" value="1" checked="checked" style="width: 24px; height: 24px;"/>
                     <div class="ms-4">Tiết kiệm</div>
                 </div>
                 <div class="address__main--right me-4">
-                    <fmt:formatNumber type="number" value="29000" />đ
+                    $<fmt:formatNumber type="number" value="1" />
                 </div>
             </div>
 
             <div class="address__main--content d-flex justify-content-between align-items-center"
                  style="height: 72px; border: 1px solid black; border-radius: 5px; margin-bottom: 24px">
                 <div class="main__content--left d-flex p-4">
-                    <input type="radio" name="shipping" value="49000" style="width: 24px; height: 24px;"/>
+                    <input type="radio" name="shipping" value="2" style="width: 24px; height: 24px;"/>
                     <div class="ms-4">Giao nhanh</div>
                 </div>
                 <div class="address__main--right me-4">
-                    <fmt:formatNumber type="number" value="49000" />đ
+                    $<fmt:formatNumber type="number" value="2" />
                 </div>
             </div>
 

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Helper
-    const formatVND = (n) => new Intl.NumberFormat('vi-VN').format(n) + "đ";
+    const formatUSD = (n) => "$" + new Intl.NumberFormat('en-US').format(n);
     const parseNumberFromText = (txt) => parseFloat(String(txt).replace(/[^\d.-]/g, "")) || 0;
 
 
@@ -43,10 +43,10 @@ $(document).ready(function () {
         const total = subtotal + serviceFee + shippingFee;
 
         // Cập nhật giao diện
-        $(".Subtotal .right__text").text(formatVND(subtotal));
-        $(".Taxes1 .right__text").text(formatVND(serviceFee));
-        $(".Taxes2 .right__text").text(formatVND(shippingFee));
-        $(".Total .right__text").text(formatVND(total));
+        $(".Subtotal .right__text").text(formatUSD(subtotal));
+        $(".Taxes1 .right__text").text(formatUSD(serviceFee));
+        $(".Taxes2 .right__text").text(formatUSD(shippingFee));
+        $(".Total .right__text").text(formatUSD(total));
     }
 
 

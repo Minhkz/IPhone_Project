@@ -51,7 +51,7 @@
                             <td>${orderProduct.product.avatar}</td>
                             <td>${orderProduct.product.name}</td>
                             <td>${orderProduct.quantity}</td>
-                            <td>${orderProduct.price * orderProduct.quantity}</td>
+                            <td>$<fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.quantity}" /></td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -63,7 +63,7 @@
                 <h5>
                     Tổng tiền:
                     <span class="fw-bold text-danger">
-                        ${order.totalPrice}
+                        $<fmt:formatNumber type="number" value="${order.totalPrice}" />
                     </span>
                 </h5>
             </div>

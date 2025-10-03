@@ -424,75 +424,6 @@
                 </div>
             </div>
             <div class="main__product">
-                <div class="product__top d-flex justify-content-between">
-                    <div class="product__top--left">Sản phẩm đã chọn:85</div>
-                    <div class="product__top--right">
-                        <div class="accordion-item product__top--rank">
-                            <h2 class="accordion-header" id="panelsStayOpen-headingRank">
-                                <button
-                                        class="accordion-button collapsed"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#panelsStayOpen-collapseRank"
-                                        aria-expanded="false"
-                                        aria-controls="panelsStayOpen-collapseRank"
-                                        style="font-family: Inter"
-                                >
-                                    Lọc theo đánh giá
-                                </button>
-                            </h2>
-                            <div
-                                    id="panelsStayOpen-collapseRank"
-                                    class="accordion-collapse collapse"
-                                    aria-labelledby="panelsStayOpen-headingRank"
-                            >
-                                <div class="accordion-body">
-                                    <!-- body -->
-                                    <!-- start -->
-                                    <div class="form-check">
-                                        <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                value=""
-                                                id="five"
-                                                checked
-                                        />
-                                        <label class="form-check-label items__name" for="five">
-                                            5 sao
-                                        </label>
-                                    </div>
-                                    <!-- end -->
-                                    <!-- start -->
-                                    <div class="form-check">
-                                        <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                value=""
-                                                id="four"
-                                        />
-                                        <label class="form-check-label items__name" for="four">
-                                            Từ 4 sao trở lên
-                                        </label>
-                                    </div>
-                                    <!-- end -->
-                                    <!-- start -->
-                                    <div class="form-check">
-                                        <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                value=""
-                                                id="three"
-                                        />
-                                        <label class="form-check-label items__name" for="three">
-                                            Từ 3 sao trở lên
-                                        </label>
-                                    </div>
-                                    <!-- end -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div
                         class="main__product--list"
                 >
@@ -533,7 +464,7 @@
                                                         ${product.name}
                                                 </div>
                                                 <div class="box__details--price mt-3 mb-4">
-                                                    <fmt:formatNumber type="number" value="${product.price}" />đ
+                                                    $<fmt:formatNumber type="number" value="${product.price}" />
                                                 </div>
                                                 <form action="/client/productdetails/${product.id}" method="GET">
                                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

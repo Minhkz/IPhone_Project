@@ -2,6 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +40,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><strong>Price</strong>: ${product.price}</td>
+                        <td><strong>Price</strong>: $<fmt:formatNumber type="number" value="${product.price}" /></td>
                     </tr>
                     <tr>
                         <td><strong>Description</strong>: ${product.shortDesc}</td>

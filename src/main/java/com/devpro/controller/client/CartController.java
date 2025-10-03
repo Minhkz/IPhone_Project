@@ -51,8 +51,8 @@ public class CartController {
             }
 
         }
-        double shippingFee = 29000;
-        double serviceFee = 5000;
+        double shippingFee = 1;
+        double serviceFee = 5;
 
         double total= tmpprice + shippingFee + serviceFee;
         model.addAttribute("total",total);

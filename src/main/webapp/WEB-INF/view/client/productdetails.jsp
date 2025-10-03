@@ -51,7 +51,7 @@
                 </div>
                 <div class="price m-2">
                     <h2>
-                        <fmt:formatNumber type="number" value="${productd.price}" />đ
+                        <fmt:formatNumber type="number" value="${productd.price}" />$
                     </h2>
                 </div>
                 <div class="shortDesc m-2">
@@ -197,7 +197,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${product.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                <fmt:formatNumber type="number" value="${product.price}" />đ
+                                                $<fmt:formatNumber type="number" value="${product.price}" />
                                             </div>
                                             <form action="/client/productdetails/${product.id}" method="GET">
                                                 <button type="submit" class="btn btn-dark box__details--btn">Mua ngay</button>

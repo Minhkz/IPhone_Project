@@ -63,7 +63,7 @@
                                         <img src="${env}/admin/images/product/${cartProduct.product.avatar}" alt="iPhone">
                                         <span>${cartProduct.product.name}</span>
                                     </div>
-                                    <strong><fmt:formatNumber type="number" value="${cartProduct.price * cartProduct.quantity}" />đ</strong>
+                                    <strong>$<fmt:formatNumber type="number" value="${cartProduct.price * cartProduct.quantity}" /></strong>
                                     <strong>${cartProduct.quantity}</strong>
                                 </div>
                             </c:forEach>
@@ -78,10 +78,10 @@
                             <p class="mb-1"><small>Phương thức giao hàng</small></p>
                             <p>
                                 <c:choose>
-                                    <c:when test="${typeShip == 29000}">
+                                    <c:when test="${typeShip == 1}">
                                         Tiết kiệm
                                     </c:when>
-                                    <c:when test="${typeShip == 49000}">
+                                    <c:when test="${typeShip == 2}">
                                         Giao nhanh
                                     </c:when>
                                     <c:otherwise>
@@ -91,20 +91,20 @@
                             </p>
 
                             <div class="d-flex justify-content-between"><span>Tạm tính</span><strong>
-                                <fmt:formatNumber type="number" value="${subTotal}" />đ</strong>
+                                $<fmt:formatNumber type="number" value="${subTotal}" /></strong>
                             </div>
                             <div class="d-flex justify-content-between"><span>Thuế ước tính</span><strong>
-                                <fmt:formatNumber type="number" value="${thue}" />đ
+                                $<fmt:formatNumber type="number" value="${thue}" />
                             </strong></div>
                             <div class="d-flex justify-content-between"><span>Phí vận chuyển</span>
                                 <strong>
-                                    <fmt:formatNumber type="number" value="${typeShip}" />đ
+                                    $<fmt:formatNumber type="number" value="${typeShip}" />
                                 </strong>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between fs-5"><span>Tổng cộng</span>
                                 <strong>
-                                    <fmt:formatNumber type="number" value="${total}" />đ
+                                    $<fmt:formatNumber type="number" value="${total}" />
                                 </strong>
                             </div>
                         </div>

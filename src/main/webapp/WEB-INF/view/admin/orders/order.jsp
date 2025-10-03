@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +51,7 @@
                                     <tr>
                                         <td>${order.id}</td>
                                         <td>${order.quantity}</td>
-                                        <td>${order.totalPrice}đ</td>
+                                        <td>$<fmt:formatNumber type="number" value="${order.totalPrice}" /></td>
                                         <td>${order.status}</td>
                                         <td>
                                             <a href="/admin/orders/views/${order.id}" class="btn btn-success">View</a>
