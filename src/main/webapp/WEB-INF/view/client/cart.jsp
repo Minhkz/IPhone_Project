@@ -82,7 +82,8 @@
                                         <button type="button" class="btn plus d-flex justify-content-center align-items-center">+</button>
                                     </div>
                                     <div class="price">
-                                        $<fmt:formatNumber value="${cartProduct.product.price * cartProduct.quantity}" type="number" pattern="#,###"/>
+                                        <fmt:formatNumber value="${cartProduct.product.price * cartProduct.quantity}" type="number" pattern="#,##0"/> VNĐ
+
                                     </div>
                                     <div class="cancel">
                                         <button type="button" class="btn btn-danger btn-remove"
@@ -110,29 +111,27 @@
                             <div class="Subtotal d-flex justify-content-between" >
                                 <p class="left__text">Tạm tính</p>
                                 <p class="right__text">
-                                    $<fmt:formatNumber value="${subtotal}" type="number" pattern="#,###"/>
+                                    <fmt:formatNumber value="${subtotal}" type="number" pattern="#,##0"/> VNĐ
                                 </p>
                             </div>
                             <div class="Taxes mt-3 mb-3">
                                 <div class="Taxes1 d-flex justify-content-between" data-fee="${serviceFee}">
                                     <p class="Taxes__text">Ước tính thuế</p>
                                     <p class="right__text">
-                                        $<fmt:formatNumber value="${serviceFee}" type="number" pattern="#,###"/>
-
+                                        <fmt:formatNumber value="${serviceFee}" type="number" pattern="#,##0"/> VNĐ
                                     </p>
                                 </div>
                                 <div class="Taxes2 d-flex justify-content-between" data-fee="${shippingFee}">
                                     <p class="Taxes__text">Phí vận chuyển và xử lý</p>
                                     <p class="right__text">
-                                        $<fmt:formatNumber value="${shippingFee}" type="number" pattern="#,###"/>
-
+                                        <fmt:formatNumber value="${shippingFee}" type="number" pattern="#,##0"/> VNĐ
                                     </p>
                                 </div>
                             </div>
                             <div class="Total d-flex justify-content-between">
                                 <p class="left__text">Tổng tiền</p>
                                 <p class="right__text">
-                                    $<fmt:formatNumber value="${total}" type="number" pattern="#,###"/>
+                                    <fmt:formatNumber value="${total}" type="number" pattern="#,##0"/> VNĐ
                                 </p>
                             </div>
                         </div>
@@ -148,7 +147,7 @@
         </div>
 
         <!-- Giỏ hàng trống -->
-        <div class="empty-cart text-center ${totalItem == 0 ? '' : 'd-none'}" style="margin: 23px;">
+        <div class="empty-cart text-center ${totalItem == 0 ? '' : 'd-none'}" style="margin: 35px;">
             Không có sản phẩm nào
         </div>
     </div>

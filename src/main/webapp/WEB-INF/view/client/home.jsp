@@ -189,7 +189,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${product.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                $<fmt:formatNumber value="${product.price}" type="number" pattern="#,###"/>
+                                                <fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> VNĐ
                                             </div>
                                             <form action="/client/productdetails/${product.id}" method="GET">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -303,7 +303,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${productDis.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                $<fmt:formatNumber type="number" value="${productDis.price}" />
+                                                <fmt:formatNumber value="${productDis.price}" type="number" pattern="#,##0"/> VNĐ
                                             </div>
                                             <form action="/client/productdetails/${productDis.id}" method="GET">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

@@ -52,7 +52,9 @@
                     <tr>
                         <td>#${order.id}</td>
                         <td>${order.quantity}</td>
-                        <td><fmt:formatNumber value="${order.totalPrice}" type="currency"/></td>
+                        <td>
+                            <fmt:formatNumber value="${order.totalPrice}" type="number" pattern="#,##0"/> VNĐ
+                        </td>
                         <td>
                             <c:choose>
                                 <c:when test="${order.status == 'PENDING'}">

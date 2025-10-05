@@ -107,17 +107,17 @@ public class ProductService implements IProductService {
             double minPrice = 0;
             double maxPrice=0;
             switch (price){
-                case "100-500":
-                    minPrice = 100;
-                    maxPrice = 500;
+                case "100000-5000000":
+                    minPrice = 100000;
+                    maxPrice = 5000000;
                     break;
-                case "500-1000":
-                    minPrice = 500;
-                    maxPrice = 1000;
-                    break;
-                case "1001":
-                    minPrice = 1001;
+                case "5000000-10000000":
+                    minPrice = 5000001;
                     maxPrice = 10000000;
+                    break;
+                case "10000000":
+                    minPrice = 10000000;
+                    maxPrice = 1000000000;
                     break;
             }
             combinedSpec = combinedSpec.and(ProductSpec.getProductByPrice(minPrice, maxPrice));
@@ -238,52 +238,90 @@ public class ProductService implements IProductService {
         return false;
     }
 
-    public void handlePlaceOrder(User user, Address address, HttpSession session) {
-        List<CartProduct> cartProducts = (List<CartProduct>) session.getAttribute("checkoutProducts");
+    public void handlePlaceOrder(User user, Address address, HttpSession session, String paymentType, String uuid) {
+        String type = (String)session.getAttribute("checkoutSource");
+        if(type.equals("cart")){
+            List<CartProduct> cartProducts = (List<CartProduct>) session.getAttribute("checkoutProducts");
 
-        // 1. Tạo Order
-        Order order = new Order();
-        order.setUser(user);
-        order.setAddress(address);
-        order.setTotalPrice((Double) session.getAttribute("total"));
-        order.setQuantity(cartProducts.size());
-        order.setStatus("PENDING");
+            // 1. Tạo Order
+            Order order = new Order();
+            order.setUser(user);
+            order.setAddress(address);
+            order.setTotalPrice((Double) session.getAttribute("total"));
+            order.setQuantity(cartProducts.size());
+            order.setStatus("PENDING");
+            order.setPaymentRef(paymentType.equals("COD")?"UNKNOW": uuid);
+            order.setPaymentStatus(("PAYMENT_UNPAID"));
+            order.setPaymentMethod(paymentType);
+            // Lưu order trước để có ID
+            order = orderRepository.save(order);
 
-        // Lưu order trước để có ID
-        order = orderRepository.save(order);
+            // Map quantity trong giỏ hàng
+            Map<Integer, Integer> map = (Map<Integer, Integer>) session.getAttribute("checkoutQuantities");
 
-        // Map quantity trong giỏ hàng
-        Map<Integer, Integer> map = (Map<Integer, Integer>) session.getAttribute("checkoutQuantities");
+            Cart cart = cartRepository.findByUser(user);
 
-        Cart cart = cartRepository.findByUser(user);
+            // 2. Tạo OrderProduct cho từng sản phẩm
+            for (CartProduct cartProduct : cartProducts) {
+                Product product = cartProduct.getProduct();
 
-        // 2. Tạo OrderProduct cho từng sản phẩm
-        for (CartProduct cartProduct : cartProducts) {
-            Product product = cartProduct.getProduct();
+                OrderProductKey key = new OrderProductKey(order.getId(), product.getId());
 
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrderProductKey(key);
+                orderProduct.setOrder(order);
+                orderProduct.setProduct(product);
+                orderProduct.setQuantity(map.get(product.getId()));
+                orderProduct.setPrice(cartProduct.getPrice());
+
+                orderProductRepository.save(orderProduct);
+
+                // Xoá khỏi giỏ hàng
+                cartItemRepository.deleteById(new CartProductKey(product.getId(), cart.getId()));
+            }
+
+            // 3. Cập nhật lại sum của giỏ hàng
+            int s = (Integer) session.getAttribute("sum") - cartProducts.size();
+            cart.setSum(s);
+            this.cartRepository.save(cart);
+            session.setAttribute("sum", s);
+            session.removeAttribute("checkoutProducts");
+            session.removeAttribute("checkoutQuantities");
+            session.removeAttribute("total");
+        }else{
+            int quantity = (Integer) session.getAttribute("productDetailQuanity");
+            // 1. Tạo Order
+            Order order = new Order();
+            order.setUser(user);
+            order.setAddress(address);
+            order.setTotalPrice((Double) session.getAttribute("total"));
+            order.setQuantity(quantity);
+            order.setStatus("PENDING");
+            order.setPaymentRef(paymentType.equals("COD")?"UNKNOW": uuid);
+            order.setPaymentStatus(("PAYMENT_UNPAID"));
+            order.setPaymentMethod(paymentType);
+            // Lưu order trước để có ID
+            order = orderRepository.save(order);
+
+            int id = (Integer) session.getAttribute("productDetailId");
+            Product product = this.productRepository.findById(id).get();
+
+            //2. Tạo Order product
             OrderProductKey key = new OrderProductKey(order.getId(), product.getId());
-
             OrderProduct orderProduct = new OrderProduct();
-            orderProduct.setOrderProductKey(key);
             orderProduct.setOrder(order);
             orderProduct.setProduct(product);
-            orderProduct.setQuantity(map.get(product.getId()));
-            orderProduct.setPrice(cartProduct.getPrice());
-
-            orderProductRepository.save(orderProduct);
-
-            // Xoá khỏi giỏ hàng
-            cartItemRepository.deleteById(new CartProductKey(product.getId(), cart.getId()));
+            orderProduct.setOrderProductKey(key);
+            orderProduct.setQuantity(quantity);
+            orderProduct.setPrice(product.getPrice());
+            this.orderProductRepository.save(orderProduct);
         }
+    }
 
-        // 3. Cập nhật lại sum của giỏ hàng
-        int s = (Integer) session.getAttribute("sum") - cartProducts.size();
-        cart.setSum(s);
-        this.cartRepository.save(cart);
-        session.setAttribute("sum", s);
-        session.removeAttribute("checkoutProducts");
-        session.removeAttribute("checkoutQuantities");
-        session.removeAttribute("total");
+    public void updatePayment(String paymentRef, String paymentStatus){
+        Order order = this.orderRepository.findByPaymentRef(paymentRef);
+        order.setPaymentStatus(paymentStatus);
+        orderRepository.save(order);
     }
 
 }

@@ -31,6 +31,7 @@ CREATE TABLE categories (
     trade_mark 		VARCHAR(20) NOT NULL UNIQUE
 );
 
+-- 4. Specifications
 CREATE TABLE specifications (
     id 				INT AUTO_INCREMENT PRIMARY KEY,
     color			NVARCHAR(20) NOT NULL,
@@ -42,7 +43,7 @@ CREATE TABLE specifications (
 );
 
 
--- 4. Products
+-- 5. Products
 CREATE TABLE products(
     id 				INT AUTO_INCREMENT PRIMARY KEY,
     `name` 			VARCHAR(100) NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE products(
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
     FOREIGN KEY (spec_id) REFERENCES specifications(id) ON DELETE CASCADE
 );
-
+-- 6. Address
 CREATE TABLE address(
 	id				INT AUTO_INCREMENT PRIMARY KEY,
     user_id			INT NOT NULL,
@@ -74,7 +75,7 @@ CREATE TABLE address(
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 6. Orders
+-- 7. Orders
 CREATE TABLE orders(
 	id 				INT AUTO_INCREMENT PRIMARY KEY,
     user_id 		INT DEFAULT NULL,
@@ -89,7 +90,7 @@ CREATE TABLE orders(
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- 7. Order_Product
+-- 8. Order_Product
 CREATE TABLE order_product(
 	order_id		INT,
     product_id		INT,
@@ -100,7 +101,7 @@ CREATE TABLE order_product(
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- 8. Carts
+-- 9. Carts
 CREATE TABLE carts (
   id 				INT AUTO_INCREMENT PRIMARY KEY,
   user_id 			INT NOT NULL UNIQUE,
@@ -108,7 +109,7 @@ CREATE TABLE carts (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 9. Cart_Product
+-- 10. Cart_Product
 CREATE TABLE cart_product(
 	cart_id			INT,
     product_id		INT,
@@ -119,14 +120,14 @@ CREATE TABLE cart_product(
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- 10. Wishlists
+-- 11. Wishlists
 CREATE TABLE wishlists (
   id 				INT AUTO_INCREMENT PRIMARY KEY,
   user_id 			INT NOT NULL UNIQUE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 11. Wishlist Items
+-- 12. Wishlist Items
 CREATE TABLE wishlist_items (
     wishlist_id 	INT NOT NULL,
     product_id 		INT NOT NULL,
@@ -136,7 +137,7 @@ CREATE TABLE wishlist_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
 
--- 12. Reviews
+-- 13. Reviews
 CREATE TABLE reviews (
   id 				INT AUTO_INCREMENT PRIMARY KEY,
   product_id 		INT NOT NULL,
@@ -147,32 +148,4 @@ CREATE TABLE reviews (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
-
--- 13. Payment Methods (đặt trước payments)
-CREATE TABLE payment_methods (
-  id 				INT AUTO_INCREMENT PRIMARY KEY,
-  `code`			VARCHAR(100) NOT NULL UNIQUE,
-  `name` 			VARCHAR(200) NOT NULL,
-  `description` 	VARCHAR(500),
-  is_active 		BIT(1) DEFAULT 1
-);
-
--- 14. Payments
-CREATE TABLE payments (
-  id 				INT AUTO_INCREMENT PRIMARY KEY,
-  order_id 			INT DEFAULT NULL,
-  payment_method_id INT DEFAULT NULL,
-  amount 			DECIMAL(13,2) NOT NULL,
-  `status` 			ENUM('pending','completed','failed','refunded') DEFAULT 'pending',
-  transaction_id 	VARCHAR(255),
-  paid_at 			DATETIME DEFAULT NULL,
-  created_at 		DATETIME DEFAULT NOW(),
-  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
-  FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id) ON DELETE SET NULL
-);
-
--- 15. Address
-
-
-
 

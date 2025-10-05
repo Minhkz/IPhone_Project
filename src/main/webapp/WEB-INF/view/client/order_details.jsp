@@ -63,7 +63,9 @@
                 </c:otherwise>
             </c:choose>
         </p>
-        <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.totalPrice}" type="currency"/></p>
+        <p><strong>Tổng tiền:</strong>
+            <fmt:formatNumber value="${order.totalPrice}" type="number" pattern="#,##0"/> VNĐ
+        </p>
     </div>
 
     <h5>Danh sách sản phẩm</h5>
@@ -88,8 +90,12 @@
                     </td>
                     <td>${item.product.name}</td>
                     <td>${item.quantity}</td>
-                    <td><fmt:formatNumber value="${item.price}" type="currency"/></td>
-                    <td><fmt:formatNumber value="${item.price * item.quantity}" type="currency"/></td>
+                    <td>
+                        <fmt:formatNumber value="${item.price}" type="number" pattern="#,##0"/> VNĐ
+                    </td>
+                    <td>
+                        <fmt:formatNumber value="${item.price * item.quantity}" type="number" pattern="#,##0"/> VNĐ
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>

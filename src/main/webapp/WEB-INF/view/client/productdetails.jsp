@@ -51,7 +51,7 @@
                 </div>
                 <div class="price m-2">
                     <h2>
-                        <fmt:formatNumber type="number" value="${productd.price}" />$
+                        <fmt:formatNumber value="${productd.price}" type="number" pattern="#,##0"/> VNĐ
                     </h2>
                 </div>
                 <div class="shortDesc m-2">
@@ -67,9 +67,9 @@
                 <div class="infos__btn d-flex justify-content-between m-2">
                     <button type="button" class="btn btn-outline-dark nut" id="showToastWish" data-id="${productd.id}">Thêm vào yêu thích</button>
                     <button type="button" class="btn btn-outline-dark nut" id="showToastCart" data-id="${productd.id}">Thêm vào giỏ hàng</button>
-                    <form id="checkoutForm" action="/client/payment/address?returnUrl=/client/productdetails/${productd.id}" method="post">
+                    <form id="checkoutForm" action="/client/payment/address/${productd.id}?returnUrl=/client/productdetails/${productd.id}" method="post">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                        <input type="hidden" id="selectedIds" name="selectedIds" value=""/>
+                        <input type="text" value="" name="quanity" class="number d-none" data-id="${productd.id}" data-price="${productd.price}" style="text-align:center">
                         <button type="submit" class="btn btn-outline-dark nut">Mua ngay</button>
                     </form>
                 </div>
@@ -197,7 +197,7 @@
                                         <div class="box__details d-flex flex-column justify-content-between align-items-center">
                                             <div class="box__details--name text-center">${product.name}</div>
                                             <div class="box__details--price mt-3 mb-4">
-                                                $<fmt:formatNumber type="number" value="${product.price}" />
+                                                <fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> VNĐ
                                             </div>
                                             <form action="/client/productdetails/${product.id}" method="GET">
                                                 <button type="submit" class="btn btn-dark box__details--btn">Mua ngay</button>

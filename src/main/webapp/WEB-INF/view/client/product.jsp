@@ -376,15 +376,15 @@
                                     <input
                                             class="form-check-input"
                                             type="radio"
-                                            value="100-500"
-                                            id="500"
+                                            value="100000-5000000"
+                                            id="first"
                                             name="price"
                                     />
                                     <label
                                             class="form-check-label items__name"
-                                            for="500"
+                                            for="first"
                                     >
-                                        Từ $100 -> $500
+                                        Từ 1,000,000 -> 5,000,000 VNĐ
                                     </label>
                                 </div>
                                 <!-- end -->
@@ -393,12 +393,12 @@
                                     <input
                                             class="form-check-input"
                                             type="radio"
-                                            value="500-1000"
-                                            id="501"
+                                            value="5000000-10000000"
+                                            id="second"
                                             name="price"
                                     />
-                                    <label class="form-check-label items__name" for="501">
-                                        Từ $500 -> $1000
+                                    <label class="form-check-label items__name" for="second">
+                                        Từ 5,000,000 -> 10,000,000 VNĐ
                                     </label>
                                 </div>
                                 <!-- end -->
@@ -407,12 +407,12 @@
                                     <input
                                             class="form-check-input"
                                             type="radio"
-                                            value="1001"
-                                            id="1001"
+                                            value="10000000"
+                                            id="third"
                                             name="price"
                                     />
-                                    <label class="form-check-label items__name" for="1001">
-                                        Hơn $1000
+                                    <label class="form-check-label items__name" for="third">
+                                        Hơn 10,000,000 VNĐ
                                     </label>
                                 </div>
                                 <!-- end -->
@@ -464,7 +464,7 @@
                                                         ${product.name}
                                                 </div>
                                                 <div class="box__details--price mt-3 mb-4">
-                                                    $<fmt:formatNumber type="number" value="${product.price}" />
+                                                    <fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> VNĐ
                                                 </div>
                                                 <form action="/client/productdetails/${product.id}" method="GET">
                                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

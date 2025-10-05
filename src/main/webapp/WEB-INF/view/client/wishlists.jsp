@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="rightSide d-flex gap-4">
                                     <div class="price ">
-                                        $<fmt:formatNumber type="number" value="${product.price}" />
+                                        <fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> VNĐ
                                     </div>
                                     <div class="cancel">
                                             <button type="button" class="btn btn-danger" data-id="${product.id}">

@@ -6,6 +6,7 @@ import com.devpro.repository.CartItemRepository;
 import com.devpro.repository.CartRepository;
 import com.devpro.service.impl.ProductService;
 import com.devpro.service.impl.UserService;
+import com.devpro.service.impl.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
@@ -14,10 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.devpro.models.User_.cart;
@@ -42,25 +41,50 @@ public class PayController {
     @Autowired
     private ProductService  productService;
 
+    @Autowired
+    private VNPayService  vnpayService;
+
     @PostMapping
     public String payPage(@RequestParam("shipping") String typeShip, HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
-        List<CartProduct> cartProducts = (List<CartProduct>) session.getAttribute("checkoutProducts");
-        Address address = this.addressRepository.findById((Integer) session.getAttribute("address") ).get();
-        Double thue = 5.0;
-        Double subTotal = 0.0;
-        for (CartProduct cartProduct : cartProducts) {
-            subTotal += cartProduct.getProduct().getPrice()*cartProduct.getQuantity();
+        String type = (String)session.getAttribute("checkoutSource");
+        if(type.equals("cart")){
+            List<CartProduct> cartProducts = (List<CartProduct>) session.getAttribute("checkoutProducts");
+            Address address = this.addressRepository.findById((Integer) session.getAttribute("address") ).get();
+            Double thue = 5.0;
+            Double subTotal = 0.0;
+            for (CartProduct cartProduct : cartProducts) {
+                subTotal += cartProduct.getProduct().getPrice()*cartProduct.getQuantity();
+            }
+
+            Double total = subTotal + thue + Double.parseDouble(typeShip);
+            model.addAttribute("type", "cart");
+            session.setAttribute("total", total);
+            model.addAttribute("products", cartProducts);
+            model.addAttribute("typeShip", Integer.parseInt(typeShip));
+            model.addAttribute("address", address);
+            model.addAttribute("total", total);
+            model.addAttribute("subTotal", subTotal);
+            model.addAttribute("thue", thue);
+        }else {
+            int quatity = (Integer) session.getAttribute("productDetailQuanity");
+            int id = (Integer) session.getAttribute("productDetailId");
+            Product product = productService.findById(id);
+            Address address = this.addressRepository.findById((Integer) session.getAttribute("address") ).get();
+            Double thue = 5.0;
+            Double subTotal = product.getPrice() * quatity;
+            Double total = subTotal + thue + Double.parseDouble(typeShip);
+            session.setAttribute("total", total);
+            model.addAttribute("product", product);
+            model.addAttribute("typeShip", Integer.parseInt(typeShip));
+            model.addAttribute("address", address);
+            model.addAttribute("total", total);
+            model.addAttribute("subTotal", subTotal);
+            model.addAttribute("thue", thue);
+            model.addAttribute("price", product.getPrice()*quatity);
+            model.addAttribute("quantity", quatity);
         }
 
-        Double total = subTotal + thue + Double.parseDouble(typeShip);
-        session.setAttribute("total", total);
-        model.addAttribute("products", cartProducts);
-        model.addAttribute("typeShip", Integer.parseInt(typeShip));
-        model.addAttribute("address", address);
-        model.addAttribute("total", total);
-        model.addAttribute("subTotal", subTotal);
-        model.addAttribute("thue", thue);
         return "client/checkout/payment";
     }
 
@@ -107,8 +131,29 @@ public class PayController {
             model.addAttribute("addresses", addresses);
         }
         model.addAttribute("returnUrl", urlBefore);
+        session.setAttribute("checkoutSource", "cart");
         return "client/checkout/addresses/address";
     }
+
+    @PostMapping("/address/{id}")
+    public String addressProductDetail(Model model, @PathVariable("id") int id, HttpServletRequest request
+    , @RequestParam("quanity") String quantity
+    , @RequestParam(value = "returnUrl", required = false) String urlBefore) {
+        HttpSession session = request.getSession();
+        session.setAttribute("productDetailId", id);
+        session.setAttribute("checkoutSource", "detail");
+        session.setAttribute("productDetailQuanity", Integer.parseInt(quantity));
+        String email = (String) session.getAttribute("email");
+        User user = this.userService.getUserByEmail(email);
+        if (user != null) {
+            List<Address> addresses = this.addressRepository.findByUser(user);
+
+            model.addAttribute("addresses", addresses);
+        }
+        model.addAttribute("returnUrl", urlBefore);
+        return "client/checkout/addresses/address";
+    }
+
     @GetMapping("/address")
     public String addressGEtPage(Model model,
                               HttpServletRequest request
@@ -188,22 +233,34 @@ public class PayController {
     }
 
     @GetMapping("/checkout/success")
-    public  String checkoutSuccessPage()
+    public  String checkoutSuccessPage(
+            @RequestParam("vnp_ResponseCode") Optional<String> vnpayResponse,
+            @RequestParam("vnp_TxnRef") Optional<String> paymentRef
+    )
     {
+
+        if(vnpayResponse.isPresent() && paymentRef.isPresent()){
+            String paymentStatus = vnpayResponse.get().equals("00")?"PAYMENT_SUCCEED":"PAYMENT_FAILED";
+            this.productService.updatePayment(paymentRef.get(), paymentStatus);
+        }
         return "client/checkout/checkoutsuccess";
     }
 
 
     @PostMapping("/checkout")
-    public String checkout(@RequestParam("paymentMethod") String paymentType, HttpServletRequest request)
-    {
+    public String checkout(@RequestParam("paymentMethod") String paymentType, HttpServletRequest request,
+                           @RequestParam("totalPrice") String totalPrice) throws UnsupportedEncodingException {
         HttpSession session = request.getSession();
         User currentUser = new User();
         int id = (int) session.getAttribute("id");
         currentUser.setId(id);
         Address address = this.addressRepository.findById ((Integer) session.getAttribute("address")).get();
-        if (paymentType.equals("COD")) {
-            this.productService.handlePlaceOrder(currentUser, address, session);
+        final String uuid = UUID.randomUUID().toString().replace("-", "");
+        this.productService.handlePlaceOrder(currentUser, address, session, paymentType, uuid);
+        if(!paymentType.equals("COD")){
+            String ip = vnpayService.getIpAddress(request);
+            String vnpUrl = this.vnpayService.generateVNPayURL(Double.parseDouble(totalPrice), uuid, ip);
+            return "redirect:" + vnpUrl;
         }
         return "redirect:/client/payment/checkout/success";
     }

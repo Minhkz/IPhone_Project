@@ -57,16 +57,35 @@
                     <div class="col-lg-8">
                         <div class="card-summary shadow-sm">
                             <h5 class="mb-3">Summary</h5>
-                            <c:forEach var="cartProduct" items="${products}">
-                                <div class="summary-item">
-                                    <div class="d-flex align-items-center">
-                                        <img src="${env}/admin/images/product/${cartProduct.product.avatar}" alt="iPhone">
-                                        <span>${cartProduct.product.name}</span>
+                            <c:choose>
+                                <c:when test="${type eq 'cart'}">
+                                    <c:forEach var="cartProduct" items="${products}">
+                                        <div class="summary-item">
+                                            <div class="d-flex align-items-center">
+                                                <img src="${env}/admin/images/product/${cartProduct.product.avatar}" alt="iPhone">
+                                                <span>${cartProduct.product.name}</span>
+                                            </div>
+                                            <strong>
+                                                <fmt:formatNumber value="${cartProduct.price * cartProduct.quantity}" type="number" pattern="#,##0"/> VNĐ
+                                            </strong>
+                                            <strong>${cartProduct.quantity}</strong>
+                                        </div>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="summary-item">
+                                        <div class="d-flex align-items-center">
+                                            <img src="${env}/admin/images/product/${product.avatar}" alt="iPhone">
+                                            <span>${product.name}</span>
+                                        </div>
+                                        <strong>
+                                            <fmt:formatNumber value="${price}" type="number" pattern="#,##0"/> VNĐ
+                                        </strong>
+                                        <strong>${quantity}</strong>
                                     </div>
-                                    <strong>$<fmt:formatNumber type="number" value="${cartProduct.price * cartProduct.quantity}" /></strong>
-                                    <strong>${cartProduct.quantity}</strong>
-                                </div>
-                            </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+
 
                             <p class="mt-3 mb-1"><small>Địa chỉ</small></p>
                             <p>${address.detailDesc}</p>
@@ -78,10 +97,10 @@
                             <p class="mb-1"><small>Phương thức giao hàng</small></p>
                             <p>
                                 <c:choose>
-                                    <c:when test="${typeShip == 1}">
+                                    <c:when test="${typeShip == 29000}">
                                         Tiết kiệm
                                     </c:when>
-                                    <c:when test="${typeShip == 2}">
+                                    <c:when test="${typeShip == 49000}">
                                         Giao nhanh
                                     </c:when>
                                     <c:otherwise>
@@ -90,21 +109,23 @@
                                 </c:choose>
                             </p>
 
-                            <div class="d-flex justify-content-between"><span>Tạm tính</span><strong>
-                                $<fmt:formatNumber type="number" value="${subTotal}" /></strong>
+                            <div class="d-flex justify-content-between"><span>Tạm tính</span>
+                                <strong>
+                                <fmt:formatNumber value="${subTotal}" type="number" pattern="#,##0"/> VNĐ
+                                </strong>
                             </div>
                             <div class="d-flex justify-content-between"><span>Thuế ước tính</span><strong>
-                                $<fmt:formatNumber type="number" value="${thue}" />
+                                <fmt:formatNumber value="${thue}" type="number" pattern="#,##0"/> VNĐ
                             </strong></div>
                             <div class="d-flex justify-content-between"><span>Phí vận chuyển</span>
                                 <strong>
-                                    $<fmt:formatNumber type="number" value="${typeShip}" />
+                                    <fmt:formatNumber value="${typeShip}" type="number" pattern="#,##0"/> VNĐ
                                 </strong>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between fs-5"><span>Tổng cộng</span>
                                 <strong>
-                                    $<fmt:formatNumber type="number" value="${total}" />
+                                    <fmt:formatNumber value="${total}" type="number" pattern="#,##0"/> VNĐ
                                 </strong>
                             </div>
                         </div>
@@ -128,7 +149,7 @@
                                     </label>
                                 </div>
                             </div>
-
+                            <input type="text" name="totalPrice" value="${total}" class="d-none">
                             <div class="d-flex">
                                 <a href="/client/payment/get/shipping"
                                    class="btn btn-outline-dark d-flex justify-content-center align-items-center"
