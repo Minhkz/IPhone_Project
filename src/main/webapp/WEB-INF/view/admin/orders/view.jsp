@@ -48,10 +48,14 @@
                     <c:forEach var="orderProduct" items="${orderProducts}" varStatus="loop">
                         <tr>
                             <td>${loop.index + 1}</td>
-                            <td>${orderProduct.product.avatar}</td>
+                            <td>
+                                <img src="${env}/admin/images/product/${orderProduct.product.avatar}">
+                            </td>
                             <td>${orderProduct.product.name}</td>
                             <td>${orderProduct.quantity}</td>
-                            <td>$<fmt:formatNumber type="number" value="${orderProduct.price * orderProduct.quantity}" /></td>
+                            <td>
+                                <fmt:formatNumber value="${orderProduct.price * orderProduct.quantity}" type="number" pattern="#,##0"/> VNĐ
+                            </td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -63,7 +67,7 @@
                 <h5>
                     Tổng tiền:
                     <span class="fw-bold text-danger">
-                        $<fmt:formatNumber type="number" value="${order.totalPrice}" />
+                        <fmt:formatNumber value="${order.totalPrice}" type="number" pattern="#,##0"/> VNĐ
                     </span>
                 </h5>
             </div>
@@ -74,6 +78,10 @@
             <h5>Trạng thái đơn hàng</h5>
             <span class="badge bg-warning text-dark">${order.status}</span>
 
+            <c:if test="${order.status eq 'COMPLETED'}">
+                <h5>In hóa đơn</h5>
+                <a href="/report/order/${order.id}" class="btn btn-primary">Xác nhận</a>
+            </c:if>
             <div class="mt-3">
                 <a href="/admin/orders" class="btn btn-secondary">⬅ Quay lại danh sách</a>
             </div>

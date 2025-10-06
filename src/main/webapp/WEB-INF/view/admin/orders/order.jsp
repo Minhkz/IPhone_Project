@@ -51,7 +51,9 @@
                                     <tr>
                                         <td>${order.id}</td>
                                         <td>${order.quantity}</td>
-                                        <td>$<fmt:formatNumber type="number" value="${order.totalPrice}" /></td>
+                                        <td>
+                                            <fmt:formatNumber value="${order.totalPrice}" type="number" pattern="#,##0"/> VNĐ
+                                        </td>
                                         <td>${order.status}</td>
                                         <td>
                                             <a href="/admin/orders/views/${order.id}" class="btn btn-success">View</a>

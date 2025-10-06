@@ -40,7 +40,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><strong>Price</strong>: $<fmt:formatNumber type="number" value="${product.price}" /></td>
+                        <td><strong>Price</strong>: <fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> VNĐ</td>
                     </tr>
                     <tr>
                         <td><strong>Description</strong>: ${product.shortDesc}</td>

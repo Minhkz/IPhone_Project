@@ -79,7 +79,7 @@
                                 <tr>
                                     <th>${product.id}</th>
                                     <td>${product.name}</td>
-                                    <td>$<fmt:formatNumber type="number" value="${product.price}" /></td>
+                                    <td><fmt:formatNumber type="number" value="${product.price}" />VNĐ</td>
                                     <td>${product.quantity}</td>
                                     <td>${product.sold}</td>
                                     <td>
