@@ -4,6 +4,8 @@ import com.devpro.models.*;
 import com.devpro.repository.AddressRepository;
 import com.devpro.repository.CartItemRepository;
 import com.devpro.repository.CartRepository;
+import com.devpro.repository.OrderRepository;
+import com.devpro.service.impl.EmailService;
 import com.devpro.service.impl.ProductService;
 import com.devpro.service.impl.UserService;
 import com.devpro.service.impl.VNPayService;
@@ -43,6 +45,12 @@ public class PayController {
 
     @Autowired
     private VNPayService  vnpayService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @PostMapping
     public String payPage(@RequestParam("shipping") String typeShip, HttpServletRequest request, Model model) {
@@ -235,7 +243,8 @@ public class PayController {
     @GetMapping("/checkout/success")
     public  String checkoutSuccessPage(
             @RequestParam("vnp_ResponseCode") Optional<String> vnpayResponse,
-            @RequestParam("vnp_TxnRef") Optional<String> paymentRef
+            @RequestParam("vnp_TxnRef") Optional<String> paymentRef,
+            HttpServletRequest request
     )
     {
 
@@ -243,6 +252,13 @@ public class PayController {
             String paymentStatus = vnpayResponse.get().equals("00")?"PAYMENT_SUCCEED":"PAYMENT_FAILED";
             this.productService.updatePayment(paymentRef.get(), paymentStatus);
         }
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("email");
+        User user = this.userService.getUserByEmail(email);
+        int orderId = (int) session.getAttribute("orderId");
+        Order order = this.orderRepository.findById(orderId).get();
+        List<OrderProduct> orderProducts = order.getOrderProducts();
+        this.emailService.sendOrderSuccessEmail(email, user.getFullName(), order, orderProducts);
         return "client/checkout/checkoutsuccess";
     }
 

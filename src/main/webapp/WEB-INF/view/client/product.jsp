@@ -416,7 +416,21 @@
                                     </label>
                                 </div>
                                 <!-- end -->
-
+                                <!-- start -->
+                                <div class="form-check">
+                                    <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            value="1-10000000000"
+                                            id="all"
+                                            name="price"
+                                            checked
+                                    />
+                                    <label class="form-check-label items__name" for="all">
+                                        Tất cả sản phẩm
+                                    </label>
+                                </div>
+                                <!-- end -->
                             </div>
                         </div>
                     </div>

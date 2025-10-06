@@ -119,6 +119,11 @@ public class ProductService implements IProductService {
                     minPrice = 10000000;
                     maxPrice = 1000000000;
                     break;
+                case "1-10000000000":
+                    minPrice = 1;
+                    maxPrice = 1000000000;
+                    break;
+
             }
             combinedSpec = combinedSpec.and(ProductSpec.getProductByPrice(minPrice, maxPrice));
         }
@@ -285,6 +290,7 @@ public class ProductService implements IProductService {
             cart.setSum(s);
             this.cartRepository.save(cart);
             session.setAttribute("sum", s);
+            session.setAttribute("orderId", order.getId());
             session.removeAttribute("checkoutProducts");
             session.removeAttribute("checkoutQuantities");
             session.removeAttribute("total");
@@ -315,6 +321,8 @@ public class ProductService implements IProductService {
             orderProduct.setQuantity(quantity);
             orderProduct.setPrice(product.getPrice());
             this.orderProductRepository.save(orderProduct);
+
+            session.setAttribute("orderId", order.getId());
         }
     }
 

@@ -334,6 +334,7 @@
 </button>
 
 <input type="hidden" id="username" value="${empty sessionScope.username ? '' : sessionScope.username}" />
+<input type="hidden" id="userRole" value="${empty sessionScope.role ? '' : sessionScope.role}" />
 
 <!-- Khung chat (giữ như bạn có) -->
 <div id="chat-box" style="display:none; flex-direction:column;">
@@ -365,26 +366,34 @@
     // GLOBAL
     var stompClient = null;
     var username = '';
+    var role = $('#userRole').val();
 
-    // Lấy giá trị lúc load (an toàn)
     window.onload = function () {
-        // 1) đọc từ hidden input (render từ server nếu có)
+        // 1) đọc từ hidden input
         var el = document.getElementById('username');
         if (el && el.value && el.value.trim() !== '') {
             username = el.value.trim();
+            if(role !== "USER"){
+                username+="CSKH";
+            }
         }
 
-        // 2) nếu không có, thử lấy từ userPrincipal (Spring Security) - server-side evaluated
+
         if (!username) {
             var principalFromServer = "${pageContext.request.userPrincipal != null ? pageContext.request.userPrincipal.name : ''}";
             if (principalFromServer && principalFromServer !== '') {
                 username = principalFromServer;
+                if(role !== "USER"){
+                    username+="CSKH";
+                }
             }
         }
 
-        // 3) fallback để test (Guest)
         if (!username) {
             username = 'Guest' + Math.floor(Math.random() * 10000);
+            if(role !== "USER"){
+                username+="CSKH";
+            }
             console.warn('No username from server. Using fallback:', username);
         }
 
