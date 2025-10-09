@@ -59,7 +59,7 @@ public class PayController {
         if(type.equals("cart")){
             List<CartProduct> cartProducts = (List<CartProduct>) session.getAttribute("checkoutProducts");
             Address address = this.addressRepository.findById((Integer) session.getAttribute("address") ).get();
-            Double thue = 5.0;
+            Double thue = 5000.0;
             Double subTotal = 0.0;
             for (CartProduct cartProduct : cartProducts) {
                 subTotal += cartProduct.getProduct().getPrice()*cartProduct.getQuantity();

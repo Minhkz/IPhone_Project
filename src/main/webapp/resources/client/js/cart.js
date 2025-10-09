@@ -110,27 +110,33 @@ $(document).ready(function () {
     $(document).on("click", ".plus", function () {
         const $inputQuantity = $(this).siblings(".number");
         const productId = $inputQuantity.data("id");
+        let remaining= $(`#remaining-${productId}`);
+        if(parseInt(remaining.text()) >0){
+            remaining.text(parseInt(remaining.text()) - 1);
+            $.ajax({
+                url: "/client/carts/plus/" + productId,
+                type: "POST",
+                success: function (response) {
+                    if (response.status === "success") {
+                        // cập nhật input và giá item
+                        $inputQuantity.val(response.quantity);
+                        const $priceElement = $inputQuantity.closest(".rightSide").find(".price");
+                        $priceElement.text(formatVND(response.totalPrice));
 
-        $.ajax({
-            url: "/client/carts/plus/" + productId,
-            type: "POST",
-            success: function (response) {
-                if (response.status === "success") {
-                    // cập nhật input và giá item
-                    $inputQuantity.val(response.quantity);
-                    const $priceElement = $inputQuantity.closest(".rightSide").find(".price");
-                    $priceElement.text(formatVND(response.totalPrice));
-
-                    // recompute toàn bộ summary
-                    updateSummary();
-                } else {
-                    alert("Cập nhật số lượng thất bại!");
+                        // recompute toàn bộ summary
+                        updateSummary();
+                    } else {
+                        alert("Cập nhật số lượng thất bại!");
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra khi tăng số lượng!");
                 }
-            },
-            error: function () {
-                alert("Có lỗi xảy ra khi tăng số lượng!");
-            }
-        });
+            });
+        }else {
+            alert("Đã hết hàng!");
+        }
+
     });
 
 
@@ -140,8 +146,9 @@ $(document).ready(function () {
         const $inputQuantity = $(this).siblings(".number");
         const currentVal = parseInt($inputQuantity.val()) || 1;
         const productId = $inputQuantity.data("id");
-
+        let remaining= $(`#remaining-${productId}`);
         if (currentVal > 1) {
+            remaining.text(parseInt(remaining.text()) + 1);
             $.ajax({
                 url: "/client/carts/minus/" + productId,
                 type: "POST",

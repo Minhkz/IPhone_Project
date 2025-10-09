@@ -81,6 +81,9 @@
                                                style="text-align: center;">
                                         <button type="button" class="btn plus d-flex justify-content-center align-items-center">+</button>
                                     </div>
+                                    <div class="info-product d-none" style="padding-left: 8px;">
+                                        Còn: <strong id="remaining-${cartProduct.product.id}">${cartProduct.product.quantity - 1}</strong> sản phẩm
+                                    </div>
                                     <div class="price">
                                         <fmt:formatNumber value="${cartProduct.product.price * cartProduct.quantity}" type="number" pattern="#,##0"/> VNĐ
 

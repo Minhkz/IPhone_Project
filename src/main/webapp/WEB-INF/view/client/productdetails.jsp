@@ -64,6 +64,9 @@
                     <button type="button" class="btn plus d-flex justify-content-center align-items-center">+</button>
                 </div>
                 <%--                --%>
+                <div class="info-product" style="padding-left: 8px;">
+                    Còn: <strong id="remaining">${productd.quantity - 1}</strong> sản phẩm
+                </div>
                 <div class="infos__btn d-flex justify-content-between m-2">
                     <button type="button" class="btn btn-outline-dark nut" id="showToastWish" data-id="${productd.id}">Thêm vào yêu thích</button>
                     <button type="button" class="btn btn-outline-dark nut" id="showToastCart" data-id="${productd.id}">Thêm vào giỏ hàng</button>

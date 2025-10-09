@@ -291,6 +291,12 @@ public class ProductService implements IProductService {
             this.cartRepository.save(cart);
             session.setAttribute("sum", s);
             session.setAttribute("orderId", order.getId());
+            for(Integer key : map.keySet()){
+                Product product = this.productRepository.findById(key).get();
+                product.setQuantity(product.getQuantity() - map.get(key));
+                product.setSold(product.getSold() + map.get(key) - 1);
+                this.productRepository.save(product);
+            }
             session.removeAttribute("checkoutProducts");
             session.removeAttribute("checkoutQuantities");
             session.removeAttribute("total");
@@ -321,7 +327,9 @@ public class ProductService implements IProductService {
             orderProduct.setQuantity(quantity);
             orderProduct.setPrice(product.getPrice());
             this.orderProductRepository.save(orderProduct);
-
+            product.setQuantity(product.getQuantity() - quantity);
+            product.setSold(product.getSold() + quantity - 1);
+            this.productRepository.save(product);
             session.setAttribute("orderId", order.getId());
         }
     }

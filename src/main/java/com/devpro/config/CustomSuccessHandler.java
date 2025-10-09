@@ -81,7 +81,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
                 if (user.getCart() != null && user.getCart().getSum() != null) {
                     sum = user.getCart().getSum();
                 }
-                session.setAttribute("sum", sum);
                 emailService.sendLoginSuccessEmail(user.getEmail(), user.getFullName());
             }
         }

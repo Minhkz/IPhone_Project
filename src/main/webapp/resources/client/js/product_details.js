@@ -80,10 +80,19 @@ $(document).ready(function () {
     // đảm bảo giá trị mặc định = 1
     inputQuantity.val(1);
 
+    let remaining= $("#remaining");
+
     // nút plus
     $(".plus").on("click", function () {
         let currentVal = parseInt(inputQuantity.val()) || 1;
-        inputQuantity.val(currentVal + 1);
+
+        if(parseInt(remaining.text()) >0){
+            inputQuantity.val(currentVal + 1);
+            remaining.text(parseInt(remaining.text()) - 1);
+        }else {
+            alert("Đã hết hàng!");
+        }
+
     });
 
     // nút minus
@@ -91,7 +100,9 @@ $(document).ready(function () {
         let currentVal = parseInt(inputQuantity.val()) || 1;
         if (currentVal > 1) {
             inputQuantity.val(currentVal - 1);
+            remaining.text(parseInt(remaining.text()) + 1);
         }
+
     });
 
     $(".heart__item").click(function (e) {

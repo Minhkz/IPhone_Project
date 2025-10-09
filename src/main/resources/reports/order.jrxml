@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
-                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="invoice_modern_bw" pageWidth="595" pageHeight="842"
-              columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
-              uuid="c2e1d010-2e7e-4a77-b6a3-f5a21348faaa">
+<jasperReport
+        xmlns="http://jasperreports.sourceforge.net/jasperreports"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                        http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+        name="invoice_modern_bw"
+        pageWidth="595"
+        pageHeight="842"
+        columnWidth="555"
+        leftMargin="20"
+        rightMargin="20"
+        topMargin="20"
+        bottomMargin="20"
+        uuid="c2e1d010-2e7e-4a77-b6a3-f5a21348faaa">
 
     <!-- PARAMETERS -->
     <parameter name="orderId" class="java.lang.String"/>
@@ -26,9 +33,9 @@
             <staticText>
                 <reportElement x="0" y="0" width="555" height="30"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="20" isBold="true" fontName="DejaVu Sans"/>
+                    <font size="20" isBold="true" fontName="VN-Arial"/>
                 </textElement>
-                <text><![CDATA[Hoa Don]]></text>
+                <text><![CDATA[HÓA ĐƠN]]></text>
             </staticText>
             <line>
                 <reportElement x="0" y="40" width="555" height="1" forecolor="#000000"/>
@@ -41,23 +48,36 @@
         <band height="90">
             <textField>
                 <reportElement x="0" y="0" width="200" height="15"/>
+                <textElement>
+                    <font fontName="VN-Arial"/>
+                </textElement>
                 <textFieldExpression><![CDATA["ID: #" + $P{orderId}]]></textFieldExpression>
             </textField>
 
             <textField>
                 <reportElement x="0" y="20" width="300" height="15"/>
-                <textFieldExpression><![CDATA["Customer: " + $P{customerName}]]></textFieldExpression>
+                <textElement>
+                    <font fontName="VN-Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Khách hàng: " + $P{customerName}]]></textFieldExpression>
             </textField>
 
             <textField>
                 <reportElement x="0" y="40" width="300" height="15"/>
-                <textFieldExpression><![CDATA["Phone: " + $P{phone}]]></textFieldExpression>
+                <textElement>
+                    <font fontName="VN-Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Số điện thoại: " + $P{phone}]]></textFieldExpression>
             </textField>
 
             <textField>
                 <reportElement x="0" y="60" width="500" height="15"/>
-                <textFieldExpression><![CDATA["Address: " + $P{address}]]></textFieldExpression>
+                <textElement>
+                    <font fontName="VN-Arial"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Địa chỉ: " + $P{address}]]></textFieldExpression>
             </textField>
+
         </band>
     </pageHeader>
 
@@ -71,7 +91,7 @@
             <staticText>
                 <reportElement x="0" y="0" width="30" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" fontName="DejaVu Sans"/>
+                    <font isBold="true" fontName="VN-Arial"/>
                 </textElement>
                 <text><![CDATA[#]]></text>
             </staticText>
@@ -79,33 +99,33 @@
             <staticText>
                 <reportElement x="40" y="0" width="220" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" fontName="DejaVu Sans"/>
+                    <font isBold="true" fontName="VN-Arial"/>
                 </textElement>
-                <text><![CDATA[Product Name]]></text>
+                <text><![CDATA[Tên sản phẩm]]></text>
             </staticText>
 
             <staticText>
                 <reportElement x="270" y="0" width="70" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" fontName="DejaVu Sans"/>
+                    <font isBold="true" fontName="VN-Arial"/>
                 </textElement>
-                <text><![CDATA[Quantity]]></text>
+                <text><![CDATA[Số lượng]]></text>
             </staticText>
 
             <staticText>
                 <reportElement x="350" y="0" width="90" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" fontName="DejaVu Sans"/>
+                    <font isBold="true" fontName="VN-Arial"/>
                 </textElement>
-                <text><![CDATA[Price(VND)]]></text>
+                <text><![CDATA[Giá (VND)]]></text>
             </staticText>
 
             <staticText>
                 <reportElement x="460" y="0" width="95" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" fontName="DejaVu Sans"/>
+                    <font isBold="true" fontName="VN-Arial"/>
                 </textElement>
-                <text><![CDATA[Total(VND)]]></text>
+                <text><![CDATA[Thành tiền (VND)]]></text>
             </staticText>
         </band>
     </columnHeader>
@@ -150,18 +170,18 @@
             <line>
                 <reportElement x="350" y="0" width="205" height="1" forecolor="#000000"/>
             </line>
-
             <staticText>
                 <reportElement x="350" y="10" width="100" height="15"/>
-                <text><![CDATA[Total Amount:]]></text>
+                <textElement>
+                    <font fontName="VN-Arial"/>
+                </textElement>
+                <text><![CDATA[Tổng cộng:]]></text>
             </staticText>
             <textField>
                 <reportElement x="450" y="10" width="100" height="15"/>
                 <textElement textAlignment="Right"/>
                 <textFieldExpression><![CDATA[String.format("%,.0f VND", $P{total})]]></textFieldExpression>
             </textField>
-
         </band>
     </summary>
-
 </jasperReport>
