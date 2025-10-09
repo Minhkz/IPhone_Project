@@ -47,7 +47,7 @@
             <div class="remember-forgot d-flex justify-content-between align-items-center ">
                 <div class="remember">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <input class="form-check-input" type="checkbox" name="remember-me" id="flexCheckChecked">
                         <label class="form-check-label " for="flexCheckChecked">
                             Ghi nhớ đăng nhập
                         </label>

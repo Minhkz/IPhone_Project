@@ -5,16 +5,22 @@ import com.devpro.service.impl.RoleService;
 import com.devpro.service.impl.UserService;
 import com.devpro.service.userinfo.CustomOAuth2UserService;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 
@@ -32,12 +38,20 @@ public class SecurityConfiguration {
         return new CustomUserDetailsService(userService);
     }
 
+//    @Bean
+//    public SpringSessionRememberMeServices rememberMeServices() {
+//        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+//
+//        rememberMeServices.setAlwaysRemember(true);
+//
+//        return rememberMeServices;
+//    }
+
     @Bean
     public SpringSessionRememberMeServices rememberMeServices() {
         SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
-
         rememberMeServices.setAlwaysRemember(true);
-
+        rememberMeServices.setValiditySeconds(7 * 24 * 60 * 60);
         return rememberMeServices;
     }
 
@@ -45,6 +59,7 @@ public class SecurityConfiguration {
     public CustomSuccessHandler customSuccessHandler() {
         return new CustomSuccessHandler();
     }
+
 
     @Bean
     public DaoAuthenticationProvider authProvider(
@@ -60,47 +75,50 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
-        // v6. lamda
+    SecurityFilterChain filterChain(HttpSecurity http,
+                                    UserService userService,
+                                    CustomUserDetailsService customUserDetailsService,
+                                    CustomRememberMeSuccessHandler rememberMeSuccessHandler) throws Exception {
+
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD,
-                                DispatcherType.INCLUDE)
-                        .permitAll()
-
-                        .requestMatchers("/client/homes/**", "/products/**", "/signup/**", "/admin/images/**",
-                                "/client/**", "/css/**", "/js/**", "/images/**", "/", "/admin/css/**", "/admin/assets/**"
-                        , "/admin/js/**")
-                        .permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
+                        .requestMatchers(
+                                "/client/homes/**", "/products/**", "/signup/**", "/admin/images/**",
+                                "/client/**", "/css/**", "/js/**", "/images/**", "/", "/admin/css/**",
+                                "/admin/assets/**", "/admin/js/**"
+                        ).permitAll()
                         .requestMatchers("/admin/orders/**", "/admin/reviews/**", "/admin").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/client/homes/signin")
                         .successHandler(customSuccessHandler())
                         .failureUrl("/signin?error")
-                        .userInfoEndpoint(user -> user
-                                .userService(new CustomOAuth2UserService(userService)))
+                        .userInfoEndpoint(user -> user.userService(new CustomOAuth2UserService(userService)))
                 )
-
-
-
-
-                .sessionManagement((sessionManagement) -> sessionManagement
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .invalidSessionUrl("/signin?expired")
                         .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false))
-
-                .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
-
-                .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
+                        .maxSessionsPreventsLogin(false)
+                )
+                .logout(logout -> logout
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                )
+                .rememberMe(remember -> remember
+                        .rememberMeServices(rememberMeServices())
+                )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/client/homes/signin")
+                        .loginProcessingUrl("/client/homes/signin")
                         .failureUrl("/client/homes/signin?error")
                         .successHandler(customSuccessHandler())
-                        .permitAll());
-                http.exceptionHandling(ex -> ex.accessDeniedPage("/error/403"));
+                        .permitAll()
+                )
+                .exceptionHandling(ex -> ex.accessDeniedPage("/error/403"));
 
         return http.build();
     }

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Create a User</title>
+    <title>Update a Product</title>
     <!--css-->
     <jsp:include page="/WEB-INF/view/admin/layout/css.jsp"></jsp:include>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

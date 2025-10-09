@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Product</title>
+    <title>View Product</title>
     <!--css-->
     <jsp:include page="/WEB-INF/view/admin/layout/css.jsp"></jsp:include>
 
